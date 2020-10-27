@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const ethUtil = require('ethereumjs-util')
-const sigUtil = require('eth-sig-util')
+const ethUtil = require('@fksyuan/ethereumjs-util')
+const sigUtil = require('@fksyuan/eth-sig-util')
 const { Transaction: EthereumTx } = require('ethereumjs-tx')
 const { expect } = require('chai')
 const SimpleKeyring = require('..')

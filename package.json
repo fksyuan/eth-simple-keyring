@@ -1,7 +1,7 @@
 {
-  "name": "eth-simple-keyring",
+  "name": "@fksyuan/eth-simple-keyring",
   "version": "4.0.0",
-  "description": "A simple standard interface for a series of Ethereum private keys.",
+  "description": "A simple standard interface for a series of PlatON private keys.",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
@@ -10,21 +10,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/MetaMask/eth-simple-keyring.git"
+    "url": "git+ssh://git@github.com/fksyuan/eth-simple-keyring.git"
   },
   "keywords": [
-    "ethereum",
+    "platon",
     "keyring"
   ],
   "author": "Dan Finlay",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MetaMask/eth-simple-keyring/issues"
+    "url": "https://github.com/fksyuan/eth-simple-keyring/issues"
   },
-  "homepage": "https://github.com/MetaMask/eth-simple-keyring#readme",
+  "homepage": "https://github.com/fksyuan/eth-simple-keyring#readme",
   "dependencies": {
-    "eth-sig-util": "^2.5.0",
-    "ethereumjs-util": "^5.1.1",
+    "@fksyuan/eth-sig-util": "^2.5.3",
+    "@fksyuan/ethereumjs-util": "^5.2.0",
     "ethereumjs-wallet": "^0.6.0",
     "events": "^1.1.1"
   },

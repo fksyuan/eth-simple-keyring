@@ -1,9 +1,9 @@
 const { EventEmitter } = require('events')
 const Wallet = require('ethereumjs-wallet')
-const ethUtil = require('ethereumjs-util')
+const ethUtil = require('@fksyuan/ethereumjs-util')
 
 const type = 'Simple Key Pair'
-const sigUtil = require('eth-sig-util')
+const sigUtil = require('@fksyuan/eth-sig-util')
 
 class SimpleKeyring extends EventEmitter {
 
@@ -44,8 +44,11 @@ class SimpleKeyring extends EventEmitter {
     return Promise.resolve(hexWallets)
   }
 
-  getAccounts () {
-    return Promise.resolve(this.wallets.map((w) => ethUtil.bufferToHex(w.getAddress())))
+  getAccounts (hrp) {
+    return Promise.resolve(this.wallets.map(w => {
+      const addr =  ethUtil.bufferToHex(w.getAddress())
+      return ethUtil.toBech32Address(hrp, addr)
+    }))
   }
 
   // tx is an instance of the ethereumjs-transaction class.
@@ -60,7 +63,7 @@ class SimpleKeyring extends EventEmitter {
     const message = ethUtil.stripHexPrefix(data)
     const privKey = this.getPrivateKeyFor(address, opts)
     const msgSig = ethUtil.ecsign(Buffer.from(message, 'hex'), privKey)
-    const rawMsgSig = sigUtil.concatSig(msgSig.v, msgSig.r, msgSig.s)
+    const rawMsgSig = ethUtil.bufferToHex(sigUtil.concatSig(msgSig.v, msgSig.r, msgSig.s))
     return Promise.resolve(rawMsgSig)
   }
 
@@ -70,7 +73,7 @@ class SimpleKeyring extends EventEmitter {
     const msgBuffer = ethUtil.toBuffer(msgHex)
     const msgHash = ethUtil.hashPersonalMessage(msgBuffer)
     const msgSig = ethUtil.ecsign(msgHash, privKey)
-    const rawMsgSig = sigUtil.concatSig(msgSig.v, msgSig.r, msgSig.s)
+    const rawMsgSig = ethUtil.bufferToHex(sigUtil.concatSig(msgSig.v, msgSig.r, msgSig.s))
     return Promise.resolve(rawMsgSig)
   }
 
@@ -154,7 +157,8 @@ class SimpleKeyring extends EventEmitter {
         const wallet = this._getWalletForAccount(address, {
           withAppKeyOrigin: origin,
         })
-        const appKeyAddress = sigUtil.normalize(wallet.getAddress().toString('hex'))
+        //const appKeyAddress = sigUtil.normalize(wallet.getAddress().toString('hex'))
+        const appKeyAddress = ethUtil.toBech32Address(address.substr(0,3), '0x' + wallet.getAddress().toString('hex'))
         return resolve(appKeyAddress)
       } catch (e) {
         return reject(e)
@@ -179,7 +183,8 @@ class SimpleKeyring extends EventEmitter {
    * @private
    */
   _getWalletForAccount (account, opts = {}) {
-    const address = sigUtil.normalize(account)
+    let address = sigUtil.normalize(account)
+    address = ethUtil.decodeBech32Address(address)
     let wallet = this.wallets.find((w) => ethUtil.bufferToHex(w.getAddress()) === address)
     if (!wallet) {
       throw new Error('Simple Keyring - Unable to find matching address.')
